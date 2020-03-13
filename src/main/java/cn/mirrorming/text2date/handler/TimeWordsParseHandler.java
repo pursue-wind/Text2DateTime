@@ -102,7 +102,6 @@ public class TimeWordsParseHandler implements TextHandler {
             String curMatch = match.group();
             log.info("匹配到时间字段-------------->{}", curMatch);
             startPos = match.start();
-
             if (endPos == startPos) {
                 // 假如下一个时间字段和上一个是相连的，合并两个字段
                 curIndex--;

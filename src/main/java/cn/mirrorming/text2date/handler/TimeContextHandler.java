@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -23,7 +25,7 @@ import java.util.stream.Collectors;
  */
 @Data
 public class TimeContextHandler implements TextHandler {
-    public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+
 
     @Override
     public Boolean handler(TextContent textContent) {
@@ -31,21 +33,28 @@ public class TimeContextHandler implements TextHandler {
         String baseTime = textContent.getCurTime();
         String target = textContent.getTarget();
 
+        DateTime referenceTime = textContent.getReferenceTime();
+        AtomicReference<DateTime> dateTime = new AtomicReference<>(referenceTime);
+
         List<Date> collect = tempList.stream().map(time -> {
+
             int year = normSetyear(time);
             int month = normSetmonth(time);
             int day = normSetday(time);
             int hour = normSethour(time);
             int min = normSetminute(time);
             int sec = normSetsecond(time);
-            DateTime dateTime = new DateTime(year, month, day, hour, min, sec);
+            dateTime.get().update(year, month, day, hour, min, sec);
+//            dateTime.set(new DateTime(year, month, day, hour, min, sec));
+
             //如果年月日时分秒都是-1 ，判断是不是偏移量 //如果是偏移量，则传入target判断是前还是后
 //            if (year == -1 && month == -1 && day == -1 && hour == -1 && min == -1 && sec == -1) {      }
-            dateTime = timeOffsetCalc(baseTime, time, dateTime);
-            dateTime = normSetCurRelated(baseTime, time, dateTime);
-            dateTime = normSetTotal(time, dateTime);
+            dateTime.set(timeOffsetCalc(baseTime, time, dateTime.get()));
+            dateTime.set(normSetCurRelated(baseTime, time, dateTime.get()));
+            dateTime.set(normSetTotal(time, dateTime.get()));
+
 //            Calendar calendar = buildCalendar(dateTime);
-            Date date = dateTime.buildTime();
+            Date date = dateTime.get().buildTime();
             return date;
 
         }).collect(Collectors.toList());
@@ -53,11 +62,6 @@ public class TimeContextHandler implements TextHandler {
 //        normSetmonthFuzzyday(time);
 
         textContent.setResultTime(collect);
-        collect.forEach(c -> {
-            String format = sdf.format(c);
-            System.err.println("------------------>" + format);
-        });
-        System.err.println("========================================================");
         return true;
     }
 

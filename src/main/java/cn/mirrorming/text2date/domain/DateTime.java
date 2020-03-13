@@ -21,12 +21,33 @@ import java.util.TimeZone;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DateTime {
-    private int year;
-    private int month;
-    private int day;
-    private int hour;
-    private int min;
-    private int sec;
+    private int year = -1;
+    private int month = -1;
+    private int day = -1;
+    private int hour = -1;
+    private int min = -1;
+    private int sec = -1;
+
+    public void update(int year, int month, int day, int hour, int min, int sec) {
+        if (year != -1) {
+            this.year = year;
+        }
+        if (month != -1) {
+            this.month = month;
+        }
+        if (day != -1) {
+            this.day = day;
+        }
+        if (hour != -1) {
+            this.hour = hour;
+        }
+        if (min != -1) {
+            this.min = min;
+        }
+        if (sec != -1) {
+            this.sec = sec;
+        }
+    }
 
     public Date buildTime() {
 
