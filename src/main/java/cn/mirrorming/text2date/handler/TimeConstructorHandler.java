@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 根据 timepoint 构造时间
  *
- * @author Mireal
+ * @author Mireal Chen
  * @version V1.0
  * @date 2020/3/13 10:17
  */

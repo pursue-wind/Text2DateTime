@@ -38,7 +38,7 @@ public final class TimeUtils {
             0x0d250, 0x0d520, 0x0dd45, 0x0b5a0, 0x056d0, 0x055b2, 0x049b0,
             0x0a577, 0x0a4b0, 0x0aa50, 0x1b255, 0x06d20, 0x0ada0};
     /**
-     * 节气：http://www.eoeandroid.com/forum.php?mod=viewthread&action=printable&tid=3075
+     * 节气
      */
     private final static long[] STermInfo = new long[]{0, 21208, 42467,
             63836, 85337, 107014, 128867, 150921, 173149, 195551, 218072,

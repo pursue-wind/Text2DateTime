@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 /**
  * 时间关键字分析处理器
  *
- * @author Mireal
+ * @author Mireal Chen
  * @version V1.0
  * @date 2020/3/12 20:14
  */
@@ -115,25 +115,6 @@ public class TimeWordsParseHandler implements TextHandler {
             endPos = match.end();
             curIndex++;
         }
-
-//        if (tempList.size() == 2) {
-//            final String continuousTimeReg = (tempList.get(0) + "到|至" + tempList.get(1));
-//            final Matcher matcher = Pattern.compile(continuousTimeReg).matcher(target);
-//            if (matcher.find()) {
-//                System.out.println(matcher.group());
-//            }
-//        }
-
-
-//        for (int j = 0; j < curIndex - 1; j++) {
-//            //判断连续的时间 正则表达式
-//
-//            if (matcher.find()) {
-//                System.out.println(matcher.group());
-//                break;
-//            }
-//        }
-        // 添加一个时间段标志
 
         textContent.setTempList(tempList);
         return true;

@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 /**
  * 文本预处理器
  *
- * @author Mireal
+ * @author Mireal Chen
  * @version V1.0
  * @date 2020/3/12 20:09
  */
