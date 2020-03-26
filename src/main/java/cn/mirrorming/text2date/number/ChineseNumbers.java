@@ -1,8 +1,7 @@
 package cn.mirrorming.text2date.number;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,9 +9,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-
+@Slf4j
 public class ChineseNumbers {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ChineseNumbers.class);
     private static final String[] DIGITS = {"零", "一", "二", "三", "四", "五", "六", "七", "八", "九"};
     private static final Map<Character, Integer> DIGITS_MAP = new HashMap<>();
     private static final Pattern DIGITS_PATTERN;
@@ -470,6 +468,6 @@ public class ChineseNumbers {
 
     public static void main(String[] args) {
         double total = ChineseNumbers.chineseToEnglishFull("四千五百零四万四千三百一十八");
-        LOGGER.debug("{}", total);
+        log.debug("{}", total);
     }
 }

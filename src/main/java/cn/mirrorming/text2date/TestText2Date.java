@@ -16,7 +16,7 @@ public class TestText2Date {
     public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 
     public static void main(String[] args) {
-        String a = "提醒我明天下午八点到十二点去北京开会";
+        String a = "提醒我明天下午八点到十一点去北京开会";
         try {
             TimeEntityRecognizer timeEntityRecognizer = new TimeEntityRecognizer();
             List<TimeEntity> parse = timeEntityRecognizer.parse(a);

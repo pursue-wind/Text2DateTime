@@ -3,7 +3,7 @@ package cn.mirrorming.text2date.time;
 import cn.mirrorming.text2date.number.ChineseNumbers;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.FileInputStream;
 import java.io.IOException;

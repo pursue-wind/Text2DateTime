@@ -2,7 +2,7 @@ package cn.mirrorming.text2date.time;
 
 import cn.mirrorming.text2date.number.ChineseNumbers;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
