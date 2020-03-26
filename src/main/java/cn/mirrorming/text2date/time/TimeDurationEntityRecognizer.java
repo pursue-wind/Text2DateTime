@@ -1,6 +1,7 @@
 package cn.mirrorming.text2date.time;
 
 import cn.mirrorming.text2date.number.ChineseNumbers;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -18,9 +19,8 @@ import java.util.stream.Collectors;
 /**
  * thread safe
  */
+@Slf4j
 public class TimeDurationEntityRecognizer {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(TimeDurationEntityRecognizer.class);
     private static final long YEAR_IN_SECONDS = 365 * 24 * 60 * 60;
     private static final long MONTH_IN_SECONDS = 30 * 24 * 60 * 60;
     private static final long WEEK_IN_SECONDS = 30 * 24 * 60 * 60;
@@ -44,13 +44,13 @@ public class TimeDurationEntityRecognizer {
         regexList = IOUtils.readLines(in, "UTF-8").stream().map(StringUtils::stripToNull)
                 .filter(item -> StringUtils.isNotEmpty(item) && !item.startsWith("#")).distinct()
                 .collect(Collectors.toList());
-        if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("input regex[size={}, text={}]", regexList.size(), regexList);
+        if (log.isTraceEnabled()) {
+            log.trace("input regex[size={}, text={}]", regexList.size(), regexList);
         }
         long start = System.currentTimeMillis();
         this.pattern = Pattern.compile(regexList.stream().map(item -> "(" + item + ")").collect(Collectors.joining("|")));
         long end = System.currentTimeMillis();
-        LOGGER.info("pattern initialized for {} patterns, time used(ms):{}", regexList.size(),
+        log.info("pattern initialized for {} patterns, time used(ms):{}", regexList.size(),
                 (end - start));
     }
 
