@@ -26,12 +26,10 @@ public class TestParse {
             @Cleanup BufferedReader br = new BufferedReader(isr);
             br.lines().filter(str -> !StringUtils.isEmpty(str)).forEach(a -> {
                 System.err.println("文本为----->" + a);
-
-
                 TextContent textContent = new TextContent(a);
                 HandlerChain handlerChain = new HandlerChain();
                 handlerChain.add(new TextPreHandler()).add(new TimeWordsParseHandler()).add(new TimeContextHandler());
-                Boolean handler = handlerChain.handler(textContent);
+                handlerChain.handler(textContent);
             });
         } catch (Exception e) {
             e.printStackTrace();

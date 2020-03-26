@@ -20,7 +20,7 @@ import java.util.TimeZone;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DateTime {
+public class MyDateTime {
     private int year = -1;
     private int month = -1;
     private int day = -1;

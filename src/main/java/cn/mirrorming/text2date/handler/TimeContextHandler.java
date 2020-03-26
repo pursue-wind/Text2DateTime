@@ -1,16 +1,16 @@
 package cn.mirrorming.text2date.handler;
 
-import cn.mirrorming.text2date.domain.DateTime;
+import cn.mirrorming.text2date.domain.MyDateTime;
 import cn.mirrorming.text2date.domain.TextContent;
 import cn.mirrorming.text2date.domain.RangeTimeEnum;
 import lombok.Data;
+import org.joda.time.DateTime;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,18 +26,16 @@ import java.util.stream.Collectors;
 @Data
 public class TimeContextHandler implements TextHandler {
 
-
     @Override
     public Boolean handler(TextContent textContent) {
         List<String> tempList = textContent.getTempList();
         String baseTime = textContent.getCurTime();
         String target = textContent.getTarget();
 
-        DateTime referenceTime = textContent.getReferenceTime();
-        AtomicReference<DateTime> dateTime = new AtomicReference<>(referenceTime);
-
+        MyDateTime referenceTime = textContent.getReferenceTime();
+        AtomicReference<MyDateTime> dateTime = new AtomicReference<>(referenceTime);
+        DateTime t = new DateTime();
         List<Date> collect = tempList.stream().map(time -> {
-
             int year = normSetyear(time);
             int month = normSetmonth(time);
             int day = normSetday(time);
@@ -113,8 +111,6 @@ public class TimeContextHandler implements TextHandler {
         Matcher match = pattern.matcher(timeExpression);
         if (match.find()) {
             resultMonth = Integer.parseInt(match.group());
-            /**处理倾向于未来时间的情况 */
-            //preferFuture(1);
         }
         return resultMonth;
     }
@@ -142,8 +138,6 @@ public class TimeContextHandler implements TextHandler {
                 monthRes = Integer.parseInt(month);
                 dayRes = Integer.parseInt(date);
 
-                /**处理倾向于未来时间的情况 */
-//				//preferFuture(1);
             }
         }
         return new int[]{monthRes, dayRes};
@@ -359,7 +353,7 @@ public class TimeContextHandler implements TextHandler {
      *
      * @return
      */
-    public DateTime normSetTotal(String timeExpression, DateTime dateTime) {
+    public MyDateTime normSetTotal(String timeExpression, MyDateTime myDateTime) {
         String rule;
         Pattern pattern;
         Matcher match;
@@ -373,9 +367,9 @@ public class TimeContextHandler implements TextHandler {
             tmp_parser = new String[3];
             tmp_target = match.group();
             tmp_parser = tmp_target.split(":");
-            dateTime.setHour(Integer.parseInt(tmp_parser[0]));
-            dateTime.setMin(Integer.parseInt(tmp_parser[1]));
-            dateTime.setSec(Integer.parseInt(tmp_parser[2]));
+            myDateTime.setHour(Integer.parseInt(tmp_parser[0]));
+            myDateTime.setMin(Integer.parseInt(tmp_parser[1]));
+            myDateTime.setSec(Integer.parseInt(tmp_parser[2]));
             /**处理倾向于未来时间的情况 */
 //			//preferFuture(3);
         } else {
@@ -386,8 +380,8 @@ public class TimeContextHandler implements TextHandler {
                 tmp_parser = new String[2];
                 tmp_target = match.group();
                 tmp_parser = tmp_target.split(":");
-                dateTime.setHour(Integer.parseInt(tmp_parser[0]));
-                dateTime.setMin(Integer.parseInt(tmp_parser[1]));
+                myDateTime.setHour(Integer.parseInt(tmp_parser[0]));
+                myDateTime.setMin(Integer.parseInt(tmp_parser[1]));
                 /**处理倾向于未来时间的情况 */
 //                preferFuture(3);
             }
@@ -401,11 +395,11 @@ public class TimeContextHandler implements TextHandler {
         pattern = Pattern.compile(rule);
         match = pattern.matcher(timeExpression);
         if (match.find()) {
-            if (dateTime.getHour() >= 0 && dateTime.getHour() <= 10) {
-                dateTime.setHour(dateTime.getHour() + 12);
+            if (myDateTime.getHour() >= 0 && myDateTime.getHour() <= 10) {
+                myDateTime.setHour(myDateTime.getHour() + 12);
             }
-            if (dateTime.getHour() == -1) /**增加对没有明确时间点，只写了“中午/午间”这种情况的处理*/ {
-                dateTime.setHour(RangeTimeEnum.NOON.getHourTime());
+            if (myDateTime.getHour() == -1) /**增加对没有明确时间点，只写了“中午/午间”这种情况的处理*/ {
+                myDateTime.setHour(RangeTimeEnum.NOON.getHourTime());
             }
             /**处理倾向于未来时间的情况 */
             ////preferFuture(3);
@@ -416,11 +410,11 @@ public class TimeContextHandler implements TextHandler {
         pattern = Pattern.compile(rule);
         match = pattern.matcher(timeExpression);
         if (match.find()) {
-            if (dateTime.getHour() >= 0 && dateTime.getHour() <= 11) {
-                dateTime.setHour(dateTime.getHour() + 12);
+            if (myDateTime.getHour() >= 0 && myDateTime.getHour() <= 11) {
+                myDateTime.setHour(myDateTime.getHour() + 12);
             }
-            if (dateTime.getHour() == -1) /**增加对没有明确时间点，只写了“中午/午间”这种情况的处理*/ {
-                dateTime.setHour(RangeTimeEnum.AFTERNOON.getHourTime());
+            if (myDateTime.getHour() == -1) /**增加对没有明确时间点，只写了“中午/午间”这种情况的处理*/ {
+                myDateTime.setHour(RangeTimeEnum.AFTERNOON.getHourTime());
             }
             /**处理倾向于未来时间的情况 */
             //preferFuture(3);
@@ -430,13 +424,13 @@ public class TimeContextHandler implements TextHandler {
         pattern = Pattern.compile(rule);
         match = pattern.matcher(timeExpression);
         if (match.find()) {
-            if (dateTime.getHour() >= 1 && dateTime.getHour() <= 11) {
-                dateTime.setHour(dateTime.getHour() + 12);
-            } else if (dateTime.getHour() == 12) {
-                dateTime.setHour(0);
+            if (myDateTime.getHour() >= 1 && myDateTime.getHour() <= 11) {
+                myDateTime.setHour(myDateTime.getHour() + 12);
+            } else if (myDateTime.getHour() == 12) {
+                myDateTime.setHour(0);
             }
-            if (dateTime.getHour() == -1) /**增加对没有明确时间点，只写了“中午/午间”这种情况的处理*/ {
-                dateTime.setHour(RangeTimeEnum.NIGHT.getHourTime());
+            if (myDateTime.getHour() == -1) /**增加对没有明确时间点，只写了“中午/午间”这种情况的处理*/ {
+                myDateTime.setHour(RangeTimeEnum.NIGHT.getHourTime());
             }
             /**处理倾向于未来时间的情况 */
             //preferFuture(3);
@@ -450,9 +444,9 @@ public class TimeContextHandler implements TextHandler {
             tmp_parser = new String[3];
             tmp_target = match.group();
             tmp_parser = tmp_target.split("-");
-            dateTime.setYear(Integer.parseInt(tmp_parser[0]));
-            dateTime.setMonth(Integer.parseInt(tmp_parser[1]));
-            dateTime.setDay(Integer.parseInt(tmp_parser[2]));
+            myDateTime.setYear(Integer.parseInt(tmp_parser[0]));
+            myDateTime.setMonth(Integer.parseInt(tmp_parser[1]));
+            myDateTime.setDay(Integer.parseInt(tmp_parser[2]));
 
         }
 
@@ -463,9 +457,9 @@ public class TimeContextHandler implements TextHandler {
             tmp_parser = new String[3];
             tmp_target = match.group();
             tmp_parser = tmp_target.split("/");
-            dateTime.setYear(Integer.parseInt(tmp_parser[0]));
-            dateTime.setMonth(Integer.parseInt(tmp_parser[1]));
-            dateTime.setDay(Integer.parseInt(tmp_parser[2]));
+            myDateTime.setYear(Integer.parseInt(tmp_parser[0]));
+            myDateTime.setMonth(Integer.parseInt(tmp_parser[1]));
+            myDateTime.setDay(Integer.parseInt(tmp_parser[2]));
         }
 
         /*
@@ -479,12 +473,12 @@ public class TimeContextHandler implements TextHandler {
             tmp_parser = new String[3];
             tmp_target = match.group();
             tmp_parser = tmp_target.split("\\.");
-            dateTime.setYear(Integer.parseInt(tmp_parser[0]));
-            dateTime.setMonth(Integer.parseInt(tmp_parser[1]));
-            dateTime.setDay(Integer.parseInt(tmp_parser[2]));
+            myDateTime.setYear(Integer.parseInt(tmp_parser[0]));
+            myDateTime.setMonth(Integer.parseInt(tmp_parser[1]));
+            myDateTime.setDay(Integer.parseInt(tmp_parser[2]));
         }
 
-        return dateTime;
+        return myDateTime;
     }
 
     /**
@@ -492,7 +486,7 @@ public class TimeContextHandler implements TextHandler {
      *
      * @return
      */
-    public DateTime timeOffsetCalc(String baseTime, String timeExpression, DateTime dateTime) {
+    public MyDateTime timeOffsetCalc(String baseTime, String timeExpression, MyDateTime myDateTime) {
         Integer[] intBaseTime = Arrays.stream(baseTime.split("-")).map(Integer::parseInt).toArray(Integer[]::new);
 
         Calendar calendar = Calendar.getInstance();
@@ -560,16 +554,16 @@ public class TimeContextHandler implements TextHandler {
         String s = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(calendar.getTime());
         String[] time_fin = s.split("-");
         if (flag[0] || flag[1] || flag[2]) {
-            dateTime.setYear(Integer.parseInt(time_fin[0]));
+            myDateTime.setYear(Integer.parseInt(time_fin[0]));
         }
         if (flag[1] || flag[2]) {
-            dateTime.setMonth(Integer.parseInt(time_fin[1]));
+            myDateTime.setMonth(Integer.parseInt(time_fin[1]));
         }
         if (flag[2]) {
-            dateTime.setDay(Integer.parseInt(time_fin[2]));
+            myDateTime.setDay(Integer.parseInt(time_fin[2]));
         }
 
-        return dateTime;
+        return myDateTime;
     }
 
     /**
@@ -577,7 +571,7 @@ public class TimeContextHandler implements TextHandler {
      *
      * @return
      */
-    public DateTime normSetCurRelated(String baseTime, String timeExpression, DateTime dateTime) {
+    public MyDateTime normSetCurRelated(String baseTime, String timeExpression, MyDateTime myDateTime) {
         Integer[] ini = Arrays.stream(baseTime.split("-")).map(Integer::parseInt).toArray(Integer[]::new);
         Calendar calendar = Calendar.getInstance();
         calendar.setFirstDayOfWeek(Calendar.MONDAY);
@@ -785,15 +779,15 @@ public class TimeContextHandler implements TextHandler {
         String s = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(calendar.getTime());
         String[] time_fin = s.split("-");
         if (flag[0] || flag[1] || flag[2]) {
-            dateTime.setYear(Integer.parseInt(time_fin[0]));
+            myDateTime.setYear(Integer.parseInt(time_fin[0]));
         }
         if (flag[1] || flag[2]) {
-            dateTime.setMonth(Integer.parseInt(time_fin[1]));
+            myDateTime.setMonth(Integer.parseInt(time_fin[1]));
         }
         if (flag[2]) {
-            dateTime.setDay(Integer.parseInt(time_fin[2]));
+            myDateTime.setDay(Integer.parseInt(time_fin[2]));
         }
-        return dateTime;
+        return myDateTime;
     }
 
     /**

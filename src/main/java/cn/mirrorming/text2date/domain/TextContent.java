@@ -28,7 +28,7 @@ public class TextContent implements Serializable {
     /**
      * 参考时间，后一个时间只有X点X分  但没有天的时候可以参照
      */
-    private DateTime referenceTime = new DateTime();
+    private MyDateTime referenceTime = new MyDateTime();
     /**
      * 解析的目标文本
      */
