@@ -79,7 +79,11 @@ public class TimeEntityRecognizer {
         Date lastRelative = relative;
         while (iterator.hasNext()) {
             TimeEntity timeEntity = iterator.next();
-            Date date = parseTime(timeEntity.getOriginal(), timeZone, lastRelative, lastRelative.equals(relative),
+            Date date = parseTime(
+                    timeEntity.getOriginal(),
+                    timeZone,
+                    lastRelative,
+                    lastRelative.equals(relative),
                     timeEntity);
             if (null != date) {
                 lastRelative = date;
@@ -531,22 +535,25 @@ public class TimeEntityRecognizer {
          */
         match = NOON_PATTERN.matcher(text);
         if (match.find()) {
-            if (arr[3] >= 0 && arr[3] <= 10)
+            if (arr[3] >= 0 && arr[3] <= 10) {
                 arr[3] += 12;
+            }
         }
 
         match = AFTERNOON_PATTERN.matcher(text);
         if (match.find()) {
-            if (arr[3] >= 0 && arr[3] <= 11)
+            if (arr[3] >= 0 && arr[3] <= 11) {
                 arr[3] += 12;
+            }
         }
 
         match = NIGHT_PATTERN.matcher(text);
         if (match.find()) {
-            if (arr[3] >= 1 && arr[3] <= 11)
+            if (arr[3] >= 1 && arr[3] <= 11) {
                 arr[3] += 12;
-            else if (arr[3] == 12)
+            } else if (arr[3] == 12) {
                 arr[3] = 0;
+            }
         }
 
 
@@ -579,12 +586,16 @@ public class TimeEntityRecognizer {
         }
     }
 
+    private static final Pattern HALF_AN_HOUR_BEFORE_PATTERN = Pattern.compile("(\\d?+(个?+半+个?+小时[以之]?前))");
+    private static final Pattern HALF_AN_HOUR_AFTER_PATTERN = Pattern.compile("(\\d?+(个?+半+个?+小时[以之]?后))");
+
     private static final Pattern MINUTE_BEFORE_PATTERN = Pattern.compile("(\\d+(?=分钟[以之]?前))|((?<=提前)\\d+(?=分钟))");
     private static final Pattern MINUTE_AFTER_PATTERN = Pattern.compile("\\d+(?=分钟[以之]?后)");
     private static final Pattern HOURS_BEFORE_PATTERN = Pattern.compile("(\\d+(?=(个)?小时[以之]?前))|((?<=提前)\\d+(?=(个)?小时))");
     private static final Pattern HOURS_AFTER_PATTERN = Pattern.compile("\\d+(?=(个)?小时[以之]?后)");
     private static final Pattern DAYS_BEFORE_PATTERN = Pattern.compile("(\\d+(?=天[以之]?前))|((?<=提前)?\\d+(?=天))");
     private static final Pattern DAYS_AFTER_PATTERN = Pattern.compile("\\d+(?=天[以之]?后)");
+
     private static final Pattern MONTH_BEFORE_PATTERN = Pattern.compile("\\d+(?=(个)?月[以之]?前)");
     private static final Pattern MONTH_AFTER_PATTERN = Pattern.compile("\\d+(?=(个)?月[以之]?后)");
     private static final Pattern YEAR_BEFORE_PATTERN = Pattern.compile("\\d+(?=年[以之]?前)");
@@ -605,13 +616,44 @@ public class TimeEntityRecognizer {
             flag[3] = true;
             flag[4] = true;
         }
-
         match = HOURS_AFTER_PATTERN.matcher(text);
         if (match.find()) {
             int hour = Integer.parseInt(match.group());
             calendar.add(Calendar.HOUR_OF_DAY, hour);
             flag[3] = true;
             flag[4] = true;
+        }
+
+        //匹配xx个半小时前
+        match = HALF_AN_HOUR_BEFORE_PATTERN.matcher(text);
+        if (match.find()) {
+
+            String group = match.group();
+            if (group.startsWith("半")) {
+                calendar.add(Calendar.MINUTE, -30);
+                flag[4] = true;
+            } else {
+                calendar.add(Calendar.HOUR_OF_DAY, -Integer.parseInt(group.substring(0, 1)));
+                calendar.add(Calendar.MINUTE, -30);
+                flag[3] = true;
+                flag[4] = true;
+            }
+        }
+
+        //匹配xx个半小时后
+        match = HALF_AN_HOUR_AFTER_PATTERN.matcher(text);
+        if (match.find()) {
+            System.out.println(match.group());
+            String group = match.group();
+            if (group.startsWith("半")) {
+                calendar.add(Calendar.MINUTE, 30);
+                flag[4] = true;
+            } else {
+                calendar.add(Calendar.HOUR_OF_DAY, Integer.parseInt(group.substring(0, 1)));
+                calendar.add(Calendar.MINUTE, 30);
+                flag[3] = true;
+                flag[4] = true;
+            }
         }
 
         match = MINUTE_BEFORE_PATTERN.matcher(text);
@@ -628,6 +670,13 @@ public class TimeEntityRecognizer {
             flag[4] = true;
         }
 
+//        match = HALF_AN_HOUR_PATTERN.matcher(text);
+//        if (match.find()) {
+//            int day = Integer.parseInt(match.group());
+//            calendar.add(Calendar.MINUTE, -30);
+//            flag[4] = true;
+//        }
+
         match = DAYS_BEFORE_PATTERN.matcher(text);
         if (match.find()) {
             int day = Integer.parseInt(match.group());
@@ -636,6 +685,7 @@ public class TimeEntityRecognizer {
             flag[3] = true;
             flag[4] = true;
         }
+
 
         match = DAYS_AFTER_PATTERN.matcher(text);
         if (match.find()) {

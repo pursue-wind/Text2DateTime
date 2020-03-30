@@ -1,6 +1,5 @@
 package cn.mirrorming.text2date;
 
-
 import cn.mirrorming.text2date.time.TimeEntity;
 import cn.mirrorming.text2date.time.TimeEntityRecognizer;
 import lombok.Cleanup;
@@ -19,7 +18,7 @@ import java.util.List;
  * @author Mireal Chen
  */
 public class TestParse {
-    public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+    public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd  HH-mm-ss");
 
     public static void main(String[] args) {
         String filepath = "src/main/resources/parse/测试用例.txt";
